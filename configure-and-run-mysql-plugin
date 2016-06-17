@@ -1,0 +1,102 @@
+#!/bin/sh
+
+root_dir=$(dirname $BASH_SOURCE[0])
+will_exit=0
+
+# Default the reported name based on monitored hostname
+AGENT_NAME=${AGENT_NAME:-"${AGENT_HOST}"}
+
+#
+# First, check all the mandatory environment variables
+#
+for variable in \
+  NEW_RELIC_LICENSE_KEY NEW_RELIC_LOG_LEVEL \
+  AGENT_HOST AGENT_USER
+do
+  eval target=\$$variable
+  if [ -z "${target}" ]; then
+    echo "Must set $variable environment variable!"
+    will_exit=1
+  fi
+done
+
+if [ 0 -ne $will_exit ]; then
+  echo "Exiting"
+  exit $will_exit
+fi
+
+# Then create the config dir if needed
+mkdir -p "$root_dir/config/"
+
+#
+# and write the newrelic.json
+#
+echo '{' > "$root_dir/config/newrelic.json"
+
+#
+# Any variable that starts with NEW_RELIC_ is placed in the newrelic.json
+# after the prefix is removed.
+for variable in $(env | egrep ^NEW_RELIC_ | cut -f1 -d\=); do
+  eval value=\$$variable
+  eval key=$(echo $variable | cut -f3- -d\_ | tr A-Z a-z)
+  cat >> "$root_dir/config/newrelic.json" <<END_JSON
+  "${key}": "${value}",
+END_JSON
+done
+
+# Proxy configuration
+# PROXY_HOST - The proxy host (e.g. webcache.example.com)
+# PROXY_PORT - The proxy port (e.g. 8080). Defaults to 80 if a proxy_host is set
+# PROXY_USERNAME - The proxy username
+# PROXY_PASSWORD - The proxy password
+for variable in $(env | egrep ^PROXY_ | cut -f1 -d\=); do
+  eval value=\$$variable
+  eval key=$(echo $variable | tr A-Z a-z)
+  cat >> "$root_dir/config/newrelic.json" <<END_JSON
+  "${key}": "${value}",
+END_JSON
+done
+
+# Write logs to /dev/null and close the config file
+cat >> "$root_dir/config/newrelic.json" <<END_JSON
+  "log_file_name": "null",
+  "log_file_path": "/dev"
+}
+END_JSON
+
+#
+# Now write out the specific config for this plugin
+#
+cat > "$root_dir/config/plugin.json" <<END_JSON
+{
+  "agents": [
+    {
+END_JSON
+
+for variable in $(env | egrep ^AGENT_ | cut -f1 -d\=); do
+  eval value=\$$variable
+  eval key=$(echo $variable | cut -f2- -d\_ | tr A-Z a-z)
+  cat >> "$root_dir/config/plugin.json" <<END_JSON
+      "${key}": "${value}",
+END_JSON
+done
+
+cat >> "$root_dir/config/plugin.json" <<END_JSON
+    }
+  ]
+}
+END_JSON
+
+#
+# Nothing should need to write to the filesystem
+#
+chmod -R a-w .
+
+# A little bit of helpful debug output
+echo >&2
+echo "Gathering data from \"${AGENT_HOST}\"" >&2
+echo "Reporting as \"${AGENT_NAME}\"" >&2
+echo >&2
+
+# Run the Plugin
+exec java -Xmx128m -jar plugin.jar
