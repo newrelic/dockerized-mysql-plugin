@@ -35,7 +35,7 @@ $ docker run -d \
 
 ### HTTP Proxy
 
-If your plugin will need to use an HTTP proxy to post data back to New Relic, you can set:
+If you are running your plugin from a machine that runs outbound traffic through a proxy, you can use the following optional configurations:
 
 * `PROXY_HOST` - The proxy host (e.g. webcache.example.com)
 * `PROXY_PORT` - The proxy port (e.g. 8080). Defaults to 80 if a proxy_host is set
@@ -68,3 +68,7 @@ docker run -t \
   -e AGENT_PASSWD=SuPeRsEcUrE \
   newrelic/mysql-plugin
 ```
+
+## Contributing
+
+You are welcome to send pull requests to us - however, by doing so you agree that you are granting New Relic a non-exclusive, non-revokable, no-cost license to use the code, algorithms, patents, and ideas in that code in our products if we so choose. You also agree the code is provided as-is and you provide no warranties as to its fitness or correctness for any purpose.
