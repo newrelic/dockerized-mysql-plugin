@@ -5,7 +5,7 @@ This is the New Relic Plugin for monitoring MySQL databases. It is the same one 
 In order to use the MySQL Plugin, you will need an active New Relic account
 and a New Relic license key.
 
-# How to use this image
+## How to use this image
 
 The MySQL Plugin image is configured by environment variables. These are mandatory:
 
@@ -20,7 +20,7 @@ Optionally, you can also set:
 * `AGENT_NAME` (to change what name the Plugin reports as)
 * `AGENT_METRICS` (see [metric.category.json](https://github.com/newrelic-platform/newrelic_mysql_java_plugin/blob/master/config/metric.category.json) for details)
 
-## Example
+### Example
 
 ```shell
 $ docker run -d \
@@ -31,9 +31,9 @@ $ docker run -d \
   newrelic/mysql-plugin
 ```
 
-# Additional Configuration
+## Additional Configuration
 
-## HTTP Proxy
+### HTTP Proxy
 
 If your plugin will need to use an HTTP proxy to post data back to New Relic, you can set:
 
@@ -42,7 +42,7 @@ If your plugin will need to use an HTTP proxy to post data back to New Relic, yo
 * `PROXY_USERNAME` - The proxy username
 * `PROXY_PASSWORD` - The proxy password
 
-## Monitoring MySQL Replication
+### Monitoring MySQL Replication
 
 To monitor stats like Replication Lag and Relay Log Volume are disabled by default. To monitor MySQL Replication the plugin needs to be told to check those additional metric sets by changing the `AGENT_METRICS` variable. The default is `newrelic,status`.
 
@@ -53,7 +53,7 @@ On your MySQL master:
 `AGENT_METRICS="newrelic,status,master"`
 
 
-# Getting logs and troubleshooting
+## Getting logs and troubleshooting
 
 To prevent filling up the container filesystem, no logs are written locally inside the container. Instead they are sent to Docker's logging system. By default, the logging level is `info`, however when troubleshooting it may be useful to set `NEW_RELIC_LOG_LEVEL=debug`.
 
