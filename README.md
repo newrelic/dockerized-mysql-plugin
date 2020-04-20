@@ -1,3 +1,5 @@
+[![Archived header](https://github.com/newrelic/open-source-office/raw/master/examples/categories/images/Archived.png)](https://github.com/newrelic/open-source-office/blob/master/examples/categories/index.md#archived)
+
 # The New Relic MySQL Plugin
 
 This is the New Relic Plugin for monitoring MySQL databases. It is the same one that can be found in [Plugin Central](https://rpm.newrelic.com/plugins) and on GitHub as [newrelic-platform/newrelic_mysql_java_plugin](https://github.com/newrelic-platform/newrelic_mysql_java_plugin), but packaged as a Docker container image for ease of use!
